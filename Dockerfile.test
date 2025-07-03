@@ -1,0 +1,6 @@
+FROM python:3.12
+WORKDIR /app
+COPY temperature_converter.py ./
+COPY test_temperature_converter.py ./
+RUN pip install --no-cache-dir pytest
+CMD ["pytest", "test_temperature_converter.py"] 
