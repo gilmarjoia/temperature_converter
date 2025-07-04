@@ -3,7 +3,7 @@ from src.temperature_converter import celsius_to_fahrenheit, fahrenheit_to_celsi
 
 class TestTemperatureConverter(unittest.TestCase):
     def test_celsius_to_fahrenheit(self):
-        self.assertAlmostEqual(celsius_to_fahrenheit(0), 30)
+        self.assertAlmostEqual(celsius_to_fahrenheit(0), 32)
         self.assertAlmostEqual(celsius_to_fahrenheit(100), 212)
         self.assertAlmostEqual(celsius_to_fahrenheit(-40), -40)
         self.assertAlmostEqual(celsius_to_fahrenheit(37), 98.6, places=1)
