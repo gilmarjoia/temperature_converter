@@ -1,6 +1,28 @@
-FROM python:3.12
+FROM python:3.12-slim
+
+# Set working directory
 WORKDIR /app
-COPY temperature_converter.py ./
-COPY test_temperature_converter.py ./
-RUN pip install --no-cache-dir pytest
-CMD ["pytest", "test_temperature_converter.py"] 
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies and pytest
+RUN pip install --no-cache-dir -r requirements.txt pytest
+
+# Copy all source files
+COPY app.py .
+COPY src/ ./src/
+COPY tests/ ./tests/
+
+# Set environment variables for testing
+ENV PYTHONPATH=/app
+ENV FLASK_ENV=testing
+
+# Run all tests
+CMD ["python", "-m", "pytest", "tests/", "-v"] 

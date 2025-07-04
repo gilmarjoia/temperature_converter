@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - temperature-network
+
+  # Test Service
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - PYTHONPATH=/app
+      - FLASK_ENV=testing
+    depends_on:
+      - api
+    networks:
+      - temperature-network
+    profiles:
+      - test
+
+networks:
+  temperature-network:
+    driver: bridge 
