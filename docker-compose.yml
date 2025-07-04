@@ -19,6 +19,9 @@ services:
     restart: unless-stopped
     networks:
       - temperature-network
+    entrypoint: ["/bin/bash", "-c", "./docker-build.sh build-all && python app.py"]
+    volumes:
+      - .:/app
 
   # Test Service
   test:
@@ -34,6 +37,9 @@ services:
       - temperature-network
     profiles:
       - test
+    entrypoint: ["/bin/bash", "-c", "./docker-build.sh build-all && python -m pytest tests/ -v"]
+    volumes:
+      - .:/app
 
 networks:
   temperature-network:
