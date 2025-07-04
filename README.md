@@ -43,6 +43,9 @@ Or using Docker Compose:
 docker-compose up --build api
 ```
 
+**Note:**
+> The `docker-compose.yml` is configured with an entrypoint that runs the `docker-build.sh build-all` script before starting the API or running the tests. This ensures that all containers are always built and up-to-date before starting. You don't need to manually build the images; just use `docker-compose up --build` and everything will be handled automatically.
+
 The API will be available at [http://localhost:5000](http://localhost:5000)
 
 ### Run All Tests in a Container
