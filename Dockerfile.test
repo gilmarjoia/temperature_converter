@@ -19,6 +19,10 @@ RUN pip install --no-cache-dir -r requirements.txt pytest
 COPY app.py .
 COPY src/ ./src/
 COPY tests/ ./tests/
+COPY docker-build.sh .
+
+# Make script executable
+RUN chmod +x docker-build.sh
 
 # Set environment variables for testing
 ENV PYTHONPATH=/app

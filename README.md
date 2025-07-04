@@ -30,35 +30,42 @@ The API will be available at `http://localhost:5000`
 
 You can use Docker and Docker Compose to build and run the API and tests easily.
 
-### Build and Run the API
+### Build and Run Both Services (API + Tests)
+
+Using Docker Compose (recommended):
 
 ```bash
-docker build -f Dockerfile.app -t temperature-converter-api .
-docker run -d --name temperature-api -p 5000:5000 temperature-converter-api
+docker-compose up --build
 ```
 
-Or using Docker Compose:
+This will start both the API service and the test service. The API will be available at [http://localhost:5000](http://localhost:5000).
+
+### Run Only the API Service
 
 ```bash
 docker-compose up --build api
 ```
 
-**Note:**
-> The `docker-compose.yml` is configured with an entrypoint that runs the `docker-build.sh build-all` script before starting the API or running the tests. This ensures that all containers are always built and up-to-date before starting. You don't need to manually build the images; just use `docker-compose up --build` and everything will be handled automatically.
+### Run Only the Test Service
 
-The API will be available at [http://localhost:5000](http://localhost:5000)
+```bash
+docker-compose up --build test
+```
 
-### Run All Tests in a Container
+### Manual Docker Commands
 
+If you prefer to use Docker directly:
+
+**Build and Run the API:**
+```bash
+docker build -f Dockerfile.app -t temperature-converter-api .
+docker run -d --name temperature-api -p 5000:5000 temperature-converter-api
+```
+
+**Run All Tests in a Container:**
 ```bash
 docker build -f Dockerfile.test -t temperature-converter-test .
 docker run --rm temperature-converter-test
-```
-
-Or using Docker Compose:
-
-```bash
-docker-compose run --rm test
 ```
 
 ### Using the Helper Script
@@ -71,6 +78,9 @@ You can also use the provided script for common tasks:
 ./docker-build.sh test        # Build and run all tests
 ./docker-build.sh cleanup     # Stop and remove containers
 ```
+
+**Note for Windows users:**
+> Use `docker-build.bat` instead of `docker-build.sh` when running scripts manually on Windows.
 
 ## Endpoints
 
@@ -199,32 +209,63 @@ The API returns clear error messages in English:
 
 ```json
 {
-  "error": "Field 'temperature' is required"
+  "error": "Invalid temperature value. Must be a number."
 }
 ```
 
-```json
-{
-  "error": "Temperature must be a number"
-}
+## Development
+
+### Running Tests
+
+**Local:**
+```bash
+python -m pytest tests/ -v
 ```
 
-## Testing
-
-To run tests:
-
+**With Docker:**
 ```bash
-python -m pytest tests/
+docker-compose up --build test
 ```
 
-## Docker
+### Project Structure
 
-To run with Docker:
+```
+temperature_converter/
+├── app.py                 # Main Flask application
+├── requirements.txt       # Python dependencies
+├── docker-compose.yml     # Docker Compose configuration
+├── Dockerfile.app         # API container configuration
+├── Dockerfile.test        # Test container configuration
+├── docker-build.sh        # Build script (Linux/Mac)
+├── docker-build.bat       # Build script (Windows)
+├── Jenkinsfile           # CI/CD pipeline
+├── src/
+│   ├── __init__.py
+│   └── temperature_converter.py  # Core conversion logic
+└── tests/
+    ├── __init__.py
+    ├── test_app.py        # API endpoint tests
+    └── test_temperature_converter.py  # Unit tests
+```
 
-```bash
-# Build the image
-docker build -f Dockerfile.app -t temperature-converter-api .
+## CI/CD
 
-# Run the container
-docker run -p 5000:5000 temperature-converter-api
-``` 
+This project includes a Jenkins pipeline (`Jenkinsfile`) that:
+- Builds Docker images for both API and test containers
+- Runs all tests in a containerized environment
+- Cleans up resources after completion
+
+The pipeline is designed to work on both Linux and Windows Jenkins agents.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Run the test suite
+6. Submit a pull request
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE). 
