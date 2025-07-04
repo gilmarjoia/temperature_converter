@@ -16,7 +16,11 @@ pipeline {
         stage('Build API Docker Image') {
             steps {
                 script {
-                    sh 'docker build -f Dockerfile.app -t $DOCKER_IMAGE_API .'
+                    if (isUnix()) {
+                        sh 'docker build -f Dockerfile.app -t $DOCKER_IMAGE_API .'
+                    } else {
+                        bat 'docker build -f Dockerfile.app -t %DOCKER_IMAGE_API% .'
+                    }
                 }
             }
         }
