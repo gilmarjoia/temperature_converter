@@ -67,10 +67,12 @@ pipeline {
     post {
         always {
             // Clean up old images (optional)
-            if (isUnix()) {
-                sh 'docker image prune -f || true'
-            } else {
-                bat 'docker image prune -f'
+            script {
+                if (isUnix()) {
+                    sh 'docker image prune -f || true'
+                } else {
+                    bat 'docker image prune -f'
+                }
             }
         }
         success {
