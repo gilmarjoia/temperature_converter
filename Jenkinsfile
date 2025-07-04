@@ -16,7 +16,11 @@ pipeline {
         stage('Build API Docker Image') {
             steps {
                 script {
-                    sh 'docker build -f Dockerfile.app -t $DOCKER_IMAGE_API .'
+                    if (isUnix()) {
+                        sh 'docker build -f Dockerfile.app -t $DOCKER_IMAGE_API .'
+                    } else {
+                        bat 'docker build -f Dockerfile.app -t %DOCKER_IMAGE_API% .'
+                    }
                 }
             }
         }
@@ -24,7 +28,11 @@ pipeline {
         stage('Build Test Docker Image') {
             steps {
                 script {
-                    sh 'docker build -f Dockerfile.test -t $DOCKER_IMAGE_TEST .'
+                    if (isUnix()) {
+                        sh 'docker build -f Dockerfile.test -t $DOCKER_IMAGE_TEST .'
+                    } else {
+                        bat 'docker build -f Dockerfile.test -t %DOCKER_IMAGE_TEST% .'
+                    }
                 }
             }
         }
@@ -33,7 +41,11 @@ pipeline {
             steps {
                 script {
                     // Runs the tests in the test container
-                    sh 'docker run --rm $DOCKER_IMAGE_TEST'
+                    if (isUnix()) {
+                        sh 'docker run --rm $DOCKER_IMAGE_TEST'
+                    } else {
+                        bat 'docker run --rm %DOCKER_IMAGE_TEST%'
+                    }
                 }
             }
         }
@@ -42,7 +54,11 @@ pipeline {
             steps {
                 script {
                     // Remove stopped containers (optional)
-                    sh 'docker container prune -f || true'
+                    if (isUnix()) {
+                        sh 'docker container prune -f || true'
+                    } else {
+                        bat 'docker container prune -f'
+                    }
                 }
             }
         }
@@ -51,7 +67,11 @@ pipeline {
     post {
         always {
             // Clean up old images (optional)
-            sh 'docker image prune -f || true'
+            if (isUnix()) {
+                sh 'docker image prune -f || true'
+            } else {
+                bat 'docker image prune -f'
+            }
         }
         success {
             echo 'Build and tests completed successfully!'
