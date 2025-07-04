@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     networks:
       - temperature-network
-    entrypoint: ["/bin/bash", "-c", "./docker-build.sh build-all && python app.py"]
+    entrypoint: ["/bin/sh", "-c", "if [ '$(uname -o 2>/dev/null || echo Windows_NT)' = 'Msys' ] || [ '$(uname -o 2>/dev/null || echo Windows_NT)' = 'GNU/Linux' ]; then ./docker-build.sh build-all && python app.py; else cmd /C docker-build.bat && python app.py; fi"]
     volumes:
       - .:/app
 
@@ -37,7 +37,7 @@ services:
       - temperature-network
     profiles:
       - test
-    entrypoint: ["/bin/bash", "-c", "./docker-build.sh build-all && python -m pytest tests/ -v"]
+    entrypoint: ["/bin/sh", "-c", "if [ '$(uname -o 2>/dev/null || echo Windows_NT)' = 'Msys' ] || [ '$(uname -o 2>/dev/null || echo Windows_NT)' = 'GNU/Linux' ]; then ./docker-build.sh build-all && python -m pytest tests/ -v; else cmd /C docker-build.bat && python -m pytest tests/ -v; fi"]
     volumes:
       - .:/app
 
