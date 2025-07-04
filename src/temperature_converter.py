@@ -4,7 +4,7 @@ def celsius_to_fahrenheit(temperature: float):
     :param temperature:
     :return:
     """
-    return (temperature * 1.8) + 32
+    print((temperature * 1.8) + 32)
 
 
 def fahrenheit_to_celsius(temperature: float):
